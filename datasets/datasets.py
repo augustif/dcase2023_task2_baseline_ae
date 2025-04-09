@@ -104,6 +104,7 @@ class DCASE202XT2(object):
 
 class Datasets:
     DatasetsDic = {
+        'DCASE2024T2CoffeeGrinder':DCASE202XT2,
         'DCASE2024T23DPrinter':DCASE202XT2,
         'DCASE2024T2AirCompressor':DCASE202XT2,
         'DCASE2024T2Scanner':DCASE202XT2,

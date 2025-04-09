@@ -1,5 +1,8 @@
 DCASE2024T2:
   machine_type:
+    CoffeeGrinder:
+      dev:
+        - "00"
     ToyCar:
       dev:
         - "00"
