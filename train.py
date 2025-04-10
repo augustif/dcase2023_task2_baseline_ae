@@ -1,3 +1,4 @@
+import mlflow.pytorch
 import random
 import numpy as np
 import torch
@@ -58,10 +59,27 @@ def main():
     if train:
         for epoch in range(1, args.epochs + 2):
             net.train(epoch)
+            mlflow.log_metric('train_loss', net.train_loss, step=epoch)
+            mlflow.log_metric('valid_loss', net.val_loss, step=epoch)
+
     print("============ END OF TRAIN ============")
     
     if test:
         net.test()
+        mlflow.log_metric('test_AUC_source', net.test_AUC_source)
+        mlflow.log_metric('test_AUC_target', net.test_AUC_target)
+        mlflow.log_metric('test_precision_source', net.test_precision_source)
+        mlflow.log_metric('test_recall_source', net.test_recall_source)
+        mlflow.log_metric('test_f1score_source', net.test_f1score_source)
+        mlflow.log_metric('test_precision_target', net.test_precision_target)
+        mlflow.log_metric('test_recall_target', net.test_recall_target)
+        mlflow.log_metric('test_f1score_target', net.test_f1score_target)
+
+    mlflow.pytorch.log_model(net.model, "model")
 
 if __name__ == "__main__":
-    main()
+    Experiment_name = "Grinder"
+    run_name = "1mic_f2daysRec_Bckg"
+    mlflow.set_experiment(Experiment_name)
+    with mlflow.start_run(run_name=run_name):
+        main()

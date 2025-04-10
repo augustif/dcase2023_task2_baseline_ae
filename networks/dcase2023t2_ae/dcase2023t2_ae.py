@@ -27,7 +27,6 @@ class DCASE2023T2AE(BaseModel):
         self.mse_score_distr_file_path = self.model_dir/f"score_distr_{self.args.model}_{self.args.dataset}{self.model_name_suffix}{self.eval_suffix}_seed{self.args.seed}_mse.pickle"
         self.mahala_score_distr_file_path = self.model_dir/f"score_distr_{self.args.model}_{self.args.dataset}{self.model_name_suffix}{self.eval_suffix}_seed{self.args.seed}_mahala.pickle"
 
-
     def init_model(self):
         self.block_size = self.data.height
         return AENet(input_dim=self.data.input_dim, block_size=self.block_size)
@@ -203,6 +202,8 @@ class DCASE2023T2AE(BaseModel):
 
         if not is_calc_cov:
             # plot train log
+            self.train_loss = train_loss / len(train_loader)
+            self.val_loss = val_loss / len(self.valid_loader)
             print('====> Epoch: {} Average loss: {:.4f} Validation loss: {:.4f}'.format(
                   epoch, 
                   train_loss / len(train_loader),
@@ -414,6 +415,14 @@ class DCASE2023T2AE(BaseModel):
                     performance.append([auc_s, p_auc, prec_s, recall_s, f1_s])
                     performance_over_all.append([auc_s, p_auc, prec_s, recall_s, f1_s])
 
+            self.test_AUC_source = auc_s
+            self.test_AUC_target = auc_t
+            self.test_precision_source = prec_s
+            self.test_recall_source = recall_s
+            self.test_f1score_source = f1_s
+            self.test_precision_target = prec_t
+            self.test_recall_target = recall_t
+            self.test_f1score_target = f1_t
             
             print("\n============ END OF TEST FOR A SECTION ============")
 
