@@ -1,4 +1,5 @@
-import mlflow.pytorch
+import mlflow
+import os
 import random
 import numpy as np
 import torch
@@ -78,8 +79,29 @@ def main():
     mlflow.pytorch.log_model(net.model, "model")
 
 if __name__ == "__main__":
-    Experiment_name = "Grinder"
-    run_name = "1mic_f2daysRec_Bckg"
+
+    data_path = r'data\dcase2024t2\dev_data\raw\CoffeeGrinder\train'
+    log_params_source = {'grind':[], 'bkg':[]}
+    log_params_target = {'grind':[], 'bkg':[]}
+    for data in os.listdir(data_path):
+        if 'source' in data:
+            grind_size_source = data.split('grind_')[-1].split('_')[0]  
+            if grind_size_source not in log_params_source['grind']:
+                log_params_source['grind'].append(grind_size_source)
+            bkg_source = data.split('bkg_')[-1].split('_')[0].split('.')[0]
+            if bkg_source not in log_params_source['bkg']:
+                log_params_source['bkg'].append(bkg_source)
+        elif 'target' in data:
+            grind_size_target = data.split('grind_')[-1].split('_')[0]  
+            if grind_size_target not in log_params_target['grind']:
+                log_params_target['grind'].append(grind_size_target)
+            bkg_target = data.split('bkg_')[-1].split('_')[0].split('.')[0]
+            if bkg_target not in log_params_target['bkg']:
+                log_params_target['bkg'].append(bkg_target)
+    Experiment_name = "Table"
+    run_name = "2mic_f3daysRec_bkg[-10dB]"
     mlflow.set_experiment(Experiment_name)
     with mlflow.start_run(run_name=run_name):
+        mlflow.log_param("src_grind", log_params_source)
+        mlflow.log_param("trg_grind", log_params_target)
         main()
